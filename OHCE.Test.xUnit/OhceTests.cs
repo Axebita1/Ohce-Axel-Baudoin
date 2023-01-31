@@ -1,55 +1,82 @@
 using OHCE.Langues;
-using OHCE.TEST.xUNIT.Utilities;
-using OHCE.TEST.xUNIT.Utilities.Builders;
-
-namespace OHCE.TEST.xUNIT
+using OHCE.Test.xUnit.Utilities;
+using OHCE.Test.xUnit.Utilities.Builders;
+namespace OHCE.Test.xUnit;
+public class OhceTest
 {
-    public class OhceTest
-    {
-        [Fact(DisplayName =
+    [Fact(DisplayName =
         "QUAND on entre une chaîne de caractères " +
-        "ALORS celle-ci est renvoyée en miroir")]
-        public void ReverseTest()
-        {
-            var ohce = new Ohce();
+        "ALORS elle est renvoyée en miroir")]
+    public void ReverseTest()
+    {
+        var ohce = OhceBuilder.Base;
+        var reversed = ohce.Palindrome("capricorne");
 
-            var reverse = ohce.Palindrome("capricorne");
+        Assert.Contains("enrocirpac", reversed);
+    }
+    [Theory(DisplayName = "ETANT DONNE un utilisateur parlant une langue" +
+        "QUAND on entre un palindrome " +
+        "ALORS celui-ci est renvoyé " +
+        "ET le <bienDit> de cette langue est envoyé")]
+    [MemberData(nameof(LanguesSeules))]
+    public void PalindromeTest(ILangue langue)
+    {
+        var ohce = new OhceBuilder()
+            .AyantPourLangue(langue)
+            .Build();
+        const string palindrome = "kayak";
+        var reversed = ohce.Palindrome(palindrome);
+        Assert.Contains(palindrome + langue.BienDit, reversed);
+    }
+    private static readonly IEnumerable<ILangue> Langues = new ILangue[]
+    {
+        new LangueEN(),
+        new LangueFR()
+    };
 
-            Assert.Contains("enrocirpac", reverse);
-        }
+    private static readonly IEnumerable<PeriodeJournee> Périodes = new PeriodeJournee[]
+    {
+        PeriodeJournee.Defaut,
+        PeriodeJournee.Matin,
+        PeriodeJournee.AprèsMidi,
+        PeriodeJournee.Soir,
+        PeriodeJournee.Nuit
+    };
 
-        [Fact(DisplayName = "QUAND on entre un Palindrome " +
-                            "ALORS celui-ci est renvoyé ")]
-        public void TestPalindrome()
-        {
-            var ohce = new Ohce();
+    public static IEnumerable<object[]> LanguesSeules => new CartesianData(Langues);
+    public static IEnumerable<object[]> LanguesEtPériodes => new CartesianData(Langues, Périodes);
 
-            const string palindrome = "kayak";
-            var reverse = ohce.Palindrome(palindrome);
+    [Theory(DisplayName = "ETANT DONNE un utilisateur parlant une langue" +
+        "ET que la période de la journée est <période>" +
+        "QUAND l'app démarre " +
+        "ALORS <bonjour> de cette langue à cette période est envoyé")]
+    [MemberData(nameof(LanguesSeules))]
+    public void DémarrageTest(ILangue langue, PeriodeJournee periode)
+    {
+        var ohce = new OhceBuilder()
+            .AyantPourLangue(langue)
+            .AyantPourPeriodeDeLaJournee(periode)
+            .Build();
 
-            Assert.Contains(palindrome, reverse);
-        }
+        var reversed = ohce.Palindrome(string.Empty);
 
-        [Fact(DisplayName = "QUAND on saisit une chaîne " +
-                            "Alors « Bonjour » est envoyé avant toute réponse ")]
-        public void BonjourTest()
-        {
-            var ohce = new Ohce();
+        Assert.StartsWith(langue.Bonjour(periode), reversed);
+    }
 
-            var reverse = ohce.Palindrome(string.Empty);
+    [Theory(DisplayName = "ETANT DONNE un utilisateur parlant une langue" +
+        "ET que la période de la journée est <période>" +
+        "QUAND l'app se ferme " +
+        "ALORS <auRevoir> dans cette langue est envoyé")]
+    [MemberData(nameof(LanguesSeules))]
+    public void FermetureTest(ILangue langue, PeriodeJournee periode)
+    {
+        var ohce = new OhceBuilder()
+            .AyantPourLangue(langue)
+            .AyantPourPeriodeDeLaJournee(periode)
+            .Build();
 
-            Assert.StartsWith("Bonjour", reverse);
-        }
+        var reversed = ohce.Palindrome(string.Empty);
 
-        [Fact(DisplayName = "QUAND on saisit une chaîne " +
-                            "ALORS « Au revoir » est envoyé en dernier")]
-        public void AurevoirTest()
-        {
-            var ohce = new Ohce();
-
-            var reverse = ohce.Palindrome(string.Empty);
-
-            Assert.StartsWith("Au revoir", reverse);
-        }
+        Assert.EndsWith(langue.AuRevoir(periode), reversed);
     }
 }
