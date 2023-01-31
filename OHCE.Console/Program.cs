@@ -1,9 +1,8 @@
 ﻿using OHCE;
-using OHCE.Langues;
+using OHCE.Console;
 
-ILangue langue = new LangueEN(); //Automatisation dans les prochaines Etapes.
-
-PeriodeJournee periode = PeriodeJournee.Soir; //Automatisation dans les prochaines Etapes.
+PeriodeJournee periode = new Time().PeriodeActuelle;
+ILangue langue = new Proxy().Langue; //Automatisation dans les prochaines Etapes.
 
 var ohce = new Ohce(langue, periode);
 
