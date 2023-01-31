@@ -4,7 +4,11 @@ namespace OHCE
 {
     public class Ohce
     {
-        public Ohce() { }
+        private readonly ILangue _langue;
+        public Ohce(ILangue langue)
+        {
+            _langue = langue;
+        }
         public string Palindrome(string input)
         {
 
@@ -17,26 +21,26 @@ namespace OHCE
             }
             else
             {
-                stringBuilder.Append(" - Mot inversé : " + reversedInput + "\n");
+                stringBuilder.Append(_langue.ReverseWord + " : " + reversedInput + "\n");
             }
 
-            stringBuilder.Append(DireAuRevoir()); 
+            stringBuilder.Append(DireAuRevoir());
             return stringBuilder.ToString();
         }
 
         public string DireBonjour()
         {
-            return "Bonjour";
+            return _langue.Bonjour;
         }
 
         public string DireAuRevoir()
         {
-            return "Au revoir";
+            return _langue.AuRevoir;
         }
 
         public string DireBienDit()
         {
-            return " - Bien dit !";
+            return _langue.BienDit;
         }
     }
 }

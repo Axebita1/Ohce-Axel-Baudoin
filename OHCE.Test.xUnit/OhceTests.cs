@@ -1,3 +1,7 @@
+using OHCE.Langues;
+using OHCE.TEST.xUNIT.Utilities;
+using OHCE.TEST.xUNIT.Utilities.Builders;
+
 namespace OHCE.TEST.xUNIT
 {
     public class OhceTest

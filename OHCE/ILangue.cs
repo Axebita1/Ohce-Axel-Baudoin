@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OHCE
+{
+    public interface ILangue
+    {
+        string BienDit { get; }
+        string Bonjour { get; }
+        string AuRevoir { get; }
+        string LangageUtilise { get; }
+        string InputText { get; }
+        string ReverseWord { get; }
+    }
+}
